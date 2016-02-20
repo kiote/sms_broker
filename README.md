@@ -120,6 +120,20 @@ You can change the default sender name displayed to the receiver of your SMSes.
 
 Please note that PSWinCom limits the sender name to 11 characters. See their technical documentation for further details.
 
+### Set locale
+
+You can force this gem to support different phone numbers prefixes with setting up locale:
+
+```ruby
+module SmsBroker
+  config.locale = :nb
+end
+```
+
+Only Norwegian locale is supported now. This allows you not to worry about country-prefix for phone number you set for `OutgoingMessage`.
+Thus, for `OutgoingMessage.new.recipient = '12345678'` recipient will be changed to **47**12345678.
+For `OutgoingMessage.new.recipient = '4712345678'` no changes will be made.
+
 ### Changing the program flow
 
 This gem basically does two things. It 1) offers an endpoint to which PSWinCom's SMS gateway kan post incoming messages, and 2) Handles the sending of outgoing messages to PSWinCom.

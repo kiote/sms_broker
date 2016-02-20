@@ -36,6 +36,32 @@ module SmsBroker
 
         OutgoingMessage.new.sender.should == "TestSender"
       end
+
+      context "has locale" do
+        before do
+          SmsBroker.config do |c|
+            c.stub(:locale) { :nb }
+          end
+        end
+
+        let(:outgoing_message) { OutgoingMessage.new }
+
+        it "changes recipient number for 8-digits" do
+          outgoing_message.recipient = "12345678"
+          outgoing_message.recipient.should == "4712345678"
+        end
+
+        it "does not change recipient number for any otehr amount of digits" do
+          outgoing_message.recipient = "123456789"
+          outgoing_message.recipient.should == "123456789"
+        end
+      end
+
+      it "does not change recipient number format if locale is not set" do
+        outgoing_message = OutgoingMessage.new
+        outgoing_message.recipient = "12345678"
+        outgoing_message.recipient.should == "12345678"
+      end
     end
 
     describe ".build_from_incoming" do

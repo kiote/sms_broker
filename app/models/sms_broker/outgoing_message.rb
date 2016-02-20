@@ -12,6 +12,8 @@ module SmsBroker
     SENT      = 'SENT'
     FAILED    = 'FAILED'
 
+    NORWAY_PHONE_CODE = '47'
+
     scope :sent,   -> { where(status: SENT) }
     scope :unsent, -> { where('status != ?', SENT) }
 
@@ -24,6 +26,14 @@ module SmsBroker
 
       self.status ||= SmsBroker::OutgoingMessage::NEW
       self.delivery_attempts ||= 0
+    end
+
+    def recipient=(recipient_number)
+      if SmsBroker.config.respond_to? :locale
+        self[:recipient] = localized_number(recipient_number, SmsBroker.config.locale)
+      else
+        self[:recipient] = recipient_number
+      end
     end
 
     def self.register_after_create_hook(hook)
@@ -46,6 +56,14 @@ module SmsBroker
       @@after_create_hooks.each do |hook|
         hook.execute(self)
       end
+    end
+
+    def localized_number(number, locale)
+      return number unless locale == :nb
+
+      return NORWAY_PHONE_CODE + number if number.length == 8
+
+      return number
     end
   end
 end

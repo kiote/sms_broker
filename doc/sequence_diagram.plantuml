@@ -1,0 +1,25 @@
+@startuml
+
+PSWinCom -> sms_broker: HTTP POST with incoming SMS
+activate sms_broker
+
+sms_broker -> "Your App": Call custom hooks
+activate "Your App"
+
+opt Optional, but recommended behaviour
+  "Your App" -> sms_broker: Queue OutgoingMessage
+  deactivate "Your App"
+end
+
+note over sms_broker: Persist IncomingMessage
+
+sms_broker -> PSWinCom: Return HTTP 200 (Successful)
+deactivate sms_broker
+
+note over PSWinCom: Marks Message as delivered
+
+opt If optional behavour is included
+  sms_broker -> PSWinCom: HTTP POST with outgoing SMS
+  note over PSWinCom: Sends SMS to user
+end
+@enduml

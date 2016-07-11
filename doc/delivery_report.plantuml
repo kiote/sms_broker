@@ -1,0 +1,7 @@
+@startuml
+PSWinCom -> sms_broker: HTTP POST with delivery report
+sms_broker -> PSWinCom: Return HTTP 200 (Accepted)
+sms_broker -> sms_broker: Save report to DB
+
+sms_broker -> "Your App": Call custom hooks
+@enduml
